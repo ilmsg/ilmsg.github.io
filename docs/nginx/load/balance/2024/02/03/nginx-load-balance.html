@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Nginx load balance - round robin | blog - ilmsg.in.th</title>
+<meta name="generator" content="Jekyll v4.3.3" />
+<meta property="og:title" content="Nginx load balance - round robin" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="nginx ทำ load balance ด้วย round robin" />
+<meta property="og:description" content="nginx ทำ load balance ด้วย round robin" />
+<link rel="canonical" href="http://blog.ilmsg.in.th/nginx/load/balance/2024/02/03/nginx-load-balance.html" />
+<meta property="og:url" content="http://blog.ilmsg.in.th/nginx/load/balance/2024/02/03/nginx-load-balance.html" />
+<meta property="og:site_name" content="blog - ilmsg.in.th" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2024-02-03T15:23:18+07:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Nginx load balance - round robin" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2024-02-03T15:23:18+07:00","datePublished":"2024-02-03T15:23:18+07:00","description":"nginx ทำ load balance ด้วย round robin","headline":"Nginx load balance - round robin","mainEntityOfPage":{"@type":"WebPage","@id":"http://blog.ilmsg.in.th/nginx/load/balance/2024/02/03/nginx-load-balance.html"},"url":"http://blog.ilmsg.in.th/nginx/load/balance/2024/02/03/nginx-load-balance.html"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/assets/main.css"><link type="application/atom+xml" rel="alternate" href="http://blog.ilmsg.in.th/feed.xml" title="blog - ilmsg.in.th" /></head>
+<body><header class="site-header" role="banner">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/">blog - ilmsg.in.th</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/about/">About</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Nginx load balance - round robin</h1>
+    <p class="post-meta">
+      <time class="dt-published" datetime="2024-02-03T15:23:18+07:00" itemprop="datePublished">Feb 3, 2024
+      </time></p>
+  </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <p>nginx ทำ load balance ด้วย round robin</p>
+
+<p>ได้ยินมานานแล้ว เรื่องการทำ load balance เพื่อที่จะให้เว็บไซต์ของเรา รองรับการเข้าชมจากผู้ใช้งานจำนวนมาก</p>
+
+<p>อย่างเช่น มีเครื่อง server สัก 3 เครื่องทำงานอยู่ ถ้ามีเครื่องไหนล่มไป ก็ยังเหลืออีก 2 เครื่องที่ยังทำงานได้ต่อ, ผู้ใช้งานก็ยังเข้าชมเว็บไซต์ได้ปกติ</p>
+
+<p>คำว่า round robin มันหมายถึง หมุนเป็นวงกลม แล้วตัว nginx proxy ก็ทำงานเป็นแบบนั้นเลย, user ที่เข้าเว็บมา จะเจอ nginx เป็นอันดับแรก และทำหน้าที่เป็น proxy พาไป server ที่ config เอาไว้แต่ละเครื่อง แล้วจะพาหมุนไปเรื่อยๆ, 1 คน(reqeust) ต่อ 1 เครื่อง เลย</p>
+
+<p>เรารัน <code class="language-plaintext highlighter-rouge">docker compose up -d</code> ขึ้นมาแล้ว, เราก็เข้าหน้าเว็บ <a href="http://webapp.local:3000">http://webapp.local:3000</a>, <a href="http://localhost:3000">http://localhost:3000</a> ได้เลย, แล้วกด(F5) refresh หน้าเว็บไซต์, เราจะได้ผลลัพธ์ key ว่ามาจากเครื่องไหน, สังเกตุได้ว่า key จะเปลี่ยนหมุนวนไปเรื่อยๆ</p>
+
+<p><img src="https://github.com/ilmsg/nginx-load-balance/blob/main/images/2023-12-29_130616.png?raw=true" alt="https://github.com/ilmsg/nginx-load-balance/blob/main/images/2023-12-29_130616.png?raw=true" /></p>
+
+<p><img src="https://github.com/ilmsg/nginx-load-balance/blob/main/images/2023-12-29_130629.png?raw=true" alt="https://github.com/ilmsg/nginx-load-balance/blob/main/images/2023-12-29_130629.png?raw=true" /></p>
+
+<p><img src="https://github.com/ilmsg/nginx-load-balance/blob/main/images/2023-12-29_130638.png?raw=true" alt="https://github.com/ilmsg/nginx-load-balance/blob/main/images/2023-12-29_130638.png?raw=true" /></p>
+
+<p>ตัวอย่างที่ทำ มีเครื่องมือที่ใช้เป็น docker, nginx, golang</p>
+
+<p><a href="https://github.com/ilmsg/nginx-load-balance">https://github.com/ilmsg/nginx-load-balance</a></p>
+
+  </div><a class="u-url" href="/nginx/load/balance/2024/02/03/nginx-load-balance.html" hidden></a>
+</article>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+
+    <h2 class="footer-heading">blog - ilmsg.in.th</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-1">
+        <ul class="contact-list">
+          <li class="p-name">blog - ilmsg.in.th</li><li><a class="u-email" href="mailto:eak.netpanya@gmail.com">eak.netpanya@gmail.com</a></li></ul>
+      </div>
+
+      <div class="footer-col footer-col-2"><ul class="social-media-list"><li><a href="https://github.com/ilmsg"><svg class="svg-icon"><use xlink:href="/assets/minima-social-icons.svg#github"></use></svg> <span class="username">ilmsg</span></a></li></ul>
+</div>
+
+      <div class="footer-col footer-col-3">
+        <p>blog สำหรับจดบันทึก เรียนรู้เกี่ยวกับ it คอมพิวเตอร์.</p>
+      </div>
+    </div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>
