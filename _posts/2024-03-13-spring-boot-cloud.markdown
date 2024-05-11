@@ -7,7 +7,7 @@ categories: spring boot cloud
 
 spring cloud eureka server
 
-![../images/2024-05-11_125130.png](../images/2024-05-11_125130.png)
+![/assets/images/2024-05-11_125130.png](/assets/images/2024-05-11_125130.png)
 
 ไพล์ `pom.xml` จะเพิ่ม dependencies ที่เป็น eureka server เข้ามา
 
