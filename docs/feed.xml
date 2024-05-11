@@ -1,4 +1,74 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.3.3">Jekyll</generator><link href="http://blog.ilmsg.in.th/feed.xml" rel="self" type="application/atom+xml" /><link href="http://blog.ilmsg.in.th/" rel="alternate" type="text/html" /><updated>2024-02-03T16:06:35+07:00</updated><id>http://blog.ilmsg.in.th/feed.xml</id><title type="html">blog - ilmsg.in.th</title><subtitle>blog สำหรับจดบันทึก เรียนรู้เกี่ยวกับ it คอมพิวเตอร์.</subtitle><entry><title type="html">Nginx load balance - round robin</title><link href="http://blog.ilmsg.in.th/nginx/load/balance/2024/02/03/nginx-load-balance.html" rel="alternate" type="text/html" title="Nginx load balance - round robin" /><published>2024-02-03T15:23:18+07:00</published><updated>2024-02-03T15:23:18+07:00</updated><id>http://blog.ilmsg.in.th/nginx/load/balance/2024/02/03/nginx-load-balance</id><content type="html" xml:base="http://blog.ilmsg.in.th/nginx/load/balance/2024/02/03/nginx-load-balance.html"><![CDATA[<p>nginx ทำ load balance ด้วย round robin</p>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.3.3">Jekyll</generator><link href="http://blog.ilmsg.in.th/feed.xml" rel="self" type="application/atom+xml" /><link href="http://blog.ilmsg.in.th/" rel="alternate" type="text/html" /><updated>2024-05-11T13:04:33+07:00</updated><id>http://blog.ilmsg.in.th/feed.xml</id><title type="html">blog - ilmsg.in.th</title><subtitle>blog สำหรับจดบันทึก เรียนรู้เกี่ยวกับ it คอมพิวเตอร์.</subtitle><entry><title type="html">Spring Boot Cloud Server and Client</title><link href="http://blog.ilmsg.in.th/spring/boot/cloud/2024/03/13/spring-boot-cloud.html" rel="alternate" type="text/html" title="Spring Boot Cloud Server and Client" /><published>2024-03-13T11:49:16+07:00</published><updated>2024-03-13T11:49:16+07:00</updated><id>http://blog.ilmsg.in.th/spring/boot/cloud/2024/03/13/spring-boot-cloud</id><content type="html" xml:base="http://blog.ilmsg.in.th/spring/boot/cloud/2024/03/13/spring-boot-cloud.html"><![CDATA[<p>spring cloud eureka server</p>
+
+<p><img src="../images/2024-05-11_125130.png" alt="../images/2024-05-11_125130.png" /></p>
+
+<p>ไพล์ <code class="language-plaintext highlighter-rouge">pom.xml</code> จะเพิ่ม dependencies ที่เป็น eureka server เข้ามา</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;dependencies&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+        &lt;artifactId&gt;spring-cloud-starter-netflix-eureka-server&lt;/artifactId&gt;
+    &lt;/dependency&gt;
+&lt;/dependencies&gt;
+</code></pre></div></div>
+
+<p>ไพล์ <code class="language-plaintext highlighter-rouge">application.properties</code> ตั้งค่าไว้แบบนี้</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>spring.application.name=spring-cloud-eureka-server
+
+eureka.client.register-with-eureka=false
+eureka.client.fetch-registry=false
+server.port=8761
+</code></pre></div></div>
+
+<p>ไพล์ <code class="language-plaintext highlighter-rouge">SpringCloudEurekaServerApplication.java</code>  เราจะเพิ่ม Annotations <code class="language-plaintext highlighter-rouge">@EnableEurekaServer</code> เข้ามาตัวนึง</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>package com.ilmsg.springcloudeurekaserver;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.netflix.eureka.server.EnableEurekaServer;
+
+@EnableEurekaServer
+@SpringBootApplication
+public class SpringCloudEurekaServerApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(SpringCloudEurekaServerApplication.class, args);
+    }
+}
+</code></pre></div></div>
+
+<hr />
+
+<p>spring cloud cart service <code class="language-plaintext highlighter-rouge">pom.xml</code></p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;dependencies&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+        &lt;artifactId&gt;spring-boot-starter-web&lt;/artifactId&gt;
+    &lt;/dependency&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+        &lt;artifactId&gt;spring-cloud-starter-netflix-eureka-client&lt;/artifactId&gt;
+    &lt;/dependency&gt;
+&lt;/dependencies&gt;
+</code></pre></div></div>
+
+<hr />
+
+<p>spring cloud payment service <code class="language-plaintext highlighter-rouge">pom.xml</code></p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;dependencies&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+        &lt;artifactId&gt;spring-boot-starter-web&lt;/artifactId&gt;
+    &lt;/dependency&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+        &lt;artifactId&gt;spring-cloud-starter-netflix-eureka-client&lt;/artifactId&gt;
+    &lt;/dependency&gt;
+&lt;/dependencies&gt;
+</code></pre></div></div>]]></content><author><name></name></author><category term="spring" /><category term="boot" /><category term="cloud" /><summary type="html"><![CDATA[spring cloud eureka server]]></summary></entry><entry><title type="html">Nginx load balance - round robin</title><link href="http://blog.ilmsg.in.th/nginx/load/balance/2024/02/03/nginx-load-balance.html" rel="alternate" type="text/html" title="Nginx load balance - round robin" /><published>2024-02-03T15:23:18+07:00</published><updated>2024-02-03T15:23:18+07:00</updated><id>http://blog.ilmsg.in.th/nginx/load/balance/2024/02/03/nginx-load-balance</id><content type="html" xml:base="http://blog.ilmsg.in.th/nginx/load/balance/2024/02/03/nginx-load-balance.html"><![CDATA[<p>nginx ทำ load balance ด้วย round robin</p>
 
 <p>ได้ยินมานานแล้ว เรื่องการทำ load balance เพื่อที่จะให้เว็บไซต์ของเรา รองรับการเข้าชมจากผู้ใช้งานจำนวนมาก</p>
 
